@@ -1,0 +1,50 @@
+/* Estilos Customizados */
+.hero-bg { 
+    background: radial-gradient(circle at 70% 50%, #2a2a2a 0%, #141414 60%); 
+}
+
+.hexagon-bg {
+    position: absolute; 
+    opacity: 0.05; 
+    border: 2px solid #fdb913;
+    width: 200px; 
+    height: 230px;
+    clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+}
+
+#cart-sidebar::-webkit-scrollbar { 
+    width: 5px; 
+}
+
+#cart-sidebar::-webkit-scrollbar-thumb { 
+    background: #fdb913; 
+    border-radius: 10px; 
+}
+
+/* Ajuste fino para inputs de range */
+input[type="range"] {
+    cursor: pointer;
+}
+/* Faz o carrinho deslizar da direita para a esquerda */
+@keyframes slideIn {
+    from { transform: translateX(100%); }
+    to { transform: translateX(0); }
+}
+
+.animate-slide-in {
+    animation: slideIn 0.3s ease-out;
+}
+
+/* Evita que o texto vaze em telas muito pequenas */
+#cart-items div {
+    min-width: 0; /* Essencial para o 'truncate' funcionar */
+}
+
+/* Ajuste para scroll suave no carrinho */
+.custom-scrollbar::-webkit-scrollbar {
+    width: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #fdb913;
+    border-radius: 10px;
+}
