@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Colmeia Imports - Loja Oficial</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: {
+                        brand: { yellow: '#fdb913', dark: '#141414', darker: '#0a0a0a', gray: '#f5f5f5' }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        .hero-bg { background: radial-gradient(circle at 70% 50%, #2a2a2a 0%, #141414 60%); }
+        .hexagon-bg {
+            position: absolute; opacity: 0.05; border: 2px solid #fdb913;
+            width: 200px; height: 230px;
+            clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+        }
+        input[type="range"] { cursor: pointer; }
+        @keyframes slideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
+        .animate-slide-in { animation: slideIn 0.3s ease-out; }
+        #cart-items div { min-width: 0; }
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #fdb913; border-radius: 10px; }
+    </style>
+</head>
+<body class="font-sans bg-gray-50 text-gray-800 overflow-x-hidden">
+
+    <header class="bg-brand-darker text-white py-4 sticky top-0 z-50 shadow-lg">
+        <div class="container mx-auto px-4 md:px-6 flex justify-between items-center max-w-7xl">
+            <div class="flex items-center gap-2">
+                <svg class="w-6 h-6 md:w-8 md:h-8 text-brand-yellow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                </svg>
+                <span class="text-lg md:text-xl font-bold tracking-wide uppercase">COLMEIA <span class="text-brand-yellow font-normal">IMPORTS</span></span>
+            </div>
+            <nav class="hidden md:flex gap-8 text-sm text-gray-300">
+                <a href="#inicio" class="hover:text-white transition">Início</a>
+                <a href="#produtos-section" class="hover:text-white transition">Produtos</a>
+                <a href="#sobre" class="hover:text-white transition">Sobre</a>
+                <a href="https://wa.me/5548996168426" target="_blank" class="hover:text-white transition">Contato</a>
+            </nav>
+            <div class="relative">
+                <button onclick="toggleCart()" class="text-gray-300 hover:text-brand-yellow transition relative p-2">
+                    <i class="fa-solid fa-cart-shopping text-xl"></i>
+                    <span id="cart-count" class="absolute -top-1 -right-1 bg-brand-yellow text-brand-darker text-[10px] font-bold px-1.5 py-0.5 rounded-full hidden">0</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main id="produtos-section" class="container mx-auto px-2 md:px-6 max-w-7xl py-10 md:py-16">
+        <div class="flex flex-col lg:flex-row gap-6 md:gap-10">
+            <aside class="w-full lg:w-64 flex-shrink-0">
+                <div class="bg-white p-4 md:p-6 rounded-2xl shadow-sm border border-gray-100 sticky top-24">
+                    <h2 class="font-bold text-lg mb-6 md:mb-8 uppercase tracking-tight flex items-center gap-2">
+                        <i class="fa-solid fa-sliders text-brand-yellow"></i> Filtros
+                    </h2>
+                    <div class="mb-6">
+                        <h3 class="font-bold text-xs uppercase text-gray-400 mb-3">Categorias</h3>
+                        <div id="filter-categories" class="space-y-2">
+                            <label class="flex items-center gap-3 cursor-pointer"><input type="checkbox" value="Games" onchange="applyFilters()" class="accent-brand-yellow"> <span class="text-sm">Games</span></label>
+                            <label class="flex items-center gap-3 cursor-pointer"><input type="checkbox" value="Eletrônicos" onchange="applyFilters()" class="accent-brand-yellow"> <span class="text-sm">Eletrônicos</span></label>
+                            <label class="flex items-center gap-3 cursor-pointer"><input type="checkbox" value="Beleza" onchange="applyFilters()" class="accent-brand-yellow"> <span class="text-sm">Beleza</span></label>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-xs uppercase text-gray-400 mb-3">Preço Máximo</h3>
+                        <input type="range" id="filter-price" min="0" max="10000" step="100" value="10000" oninput="applyFilters()" class="w-full accent-brand-yellow">
+                        <div class="flex justify-between mt-1 font-bold text-xs"><span>R$ 0</span><span id="price-label" class="text-brand-yellow">R$ 10.000</span></div>
+                    </div>
+                </div>
+            </aside>
+
+            <section class="flex-grow w-full overflow-hidden">
+                <div id="product-grid" class="grid grid-cols-4 gap-1.5 md:gap-6 w-full"></div>
+            </section>
+        </div>
+    </main>
+
+    <a href="https://wa.me/5548996168426" target="_blank" class="fixed bottom-6 right-6 bg-green-500 text-white w-14 h-14 rounded-full flex items-center justify-center text-3xl shadow-lg z-[55]">
+        <i class="fa-brands fa-whatsapp"></i>
+    </a>
+
+    <div id="cart-modal" class="fixed inset-0 z-[100] hidden flex">
+        <div onclick="toggleCart()" class="absolute inset-0 bg-black/60 backdrop-blur-sm"></div>
+        <div class="absolute inset-y-0 right-0 w-full max-w-[380px] bg-white shadow-2xl flex flex-col animate-slide-in">
+            <div class="p-6 border-b border-gray-100 flex justify-between items-center bg-brand-darker text-white">
+                <h2 class="text-xl font-black flex items-center gap-2"><i class="fa-solid fa-basket-shopping text-brand-yellow"></i> Minha <span class="text-brand-yellow">Cesta</span></h2>
+                <button onclick="toggleCart()" class="text-white hover:text-brand-yellow transition-colors text-2xl">&times;</button>
+            </div>
+            <div id="cart-items" class="flex-grow overflow-y-auto p-6 space-y-4 custom-scrollbar"></div>
+            <div class="p-6 border-t border-gray-100 bg-gray-50">
+                <div class="space-y-2 mb-6 text-sm">
+                    <div class="flex justify-between text-gray-500"><span>Subtotal</span><span id="cart-subtotal">R$ 0,00</span></div>
+                    <div class="flex justify-between text-brand-darker text-lg font-black"><span>Total</span><span id="cart-total">R$ 0,00</span></div>
+                </div>
+                <button onclick="sendToWhatsApp()" class="w-full bg-brand-darker text-white py-4 rounded-2xl font-bold text-lg hover:bg-brand-yellow hover:text-brand-darker transition-all flex items-center justify-center gap-3 shadow-lg active:scale-95"><i class="fa-solid fa-paper-plane"></i> Finalizar Pedido</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="installment-modal" class="fixed inset-0 bg-black/60 z-[80] hidden backdrop-blur-sm flex items-center justify-center transition-opacity">
+        <div class="bg-white p-6 rounded-3xl shadow-2xl w-[90%] max-w-sm m-4 relative border border-gray-100">
+            <button onclick="closeInstallmentModal()" class="absolute top-4 right-4 text-3xl text-gray-400 hover:text-brand-darker transition">&times;</button>
+            <h3 class="text-lg font-bold mb-1 uppercase tracking-tight flex items-center gap-2"><i class="fa-solid fa-calculator text-brand-yellow"></i> Simular Parcelas</h3>
+            <p id="modal-product-name" class="text-sm text-gray-500 font-medium mb-2 truncate"></p>
+            <p id="modal-product-price" class="text-2xl font-black text-brand-darker mb-4 pb-4 border-b border-gray-100"></p>
+            <div class="space-y-1.5 max-h-64 overflow-y-auto pr-2 custom-scrollbar" id="installment-list"></div>
+            <button onclick="closeInstallmentModal()" class="w-full mt-6 bg-gray-100 text-brand-darker py-3 rounded-xl font-bold hover:bg-gray-200 transition">Fechar</button>
+        </div>
+    </div>
+
+    <script>
+        const products = [
+            { id: 1, name: "PlayStation 5 Slim", price: 3499.90, brand: "Sony", category: "Eletrônicos", description: "Console com leitor de disco e 1TB de SSD.", img: "https://images.unsplash.com/photo-1606813907291-d86efa9b94db?auto=format&fit=crop&q=80&w=400" },
+            { id: 2, name: "Galaxy Buds3 Pro", price: 999.90, brand: "Samsung", category: "Eletrônicos", description: "Fones com cancelamento ativo de ruído.", img: "https://images.unsplash.com/photo-1606220588913-b3aacb4d2f46?auto=format&fit=crop&q=80&w=400" },
+            { id: 3, name: "DJI Mini 4 Pro", price: 4999.90, brand: "DJI", category: "Eletrônicos", description: "Drone compacto com gravação em 4K HDR.", img: "https://images.unsplash.com/photo-1507582020474-9a35b7d455d9?auto=format&fit=crop&q=80&w=400" },
+            { id: 4, name: "Nintendo Switch OLED", price: 2199.90, brand: "Nintendo", category: "Games", description: "Tela OLED de 7 polegadas e cores vibrantes.", img: "https://images.unsplash.com/photo-1578303512597-81e6cc155b3e?auto=format&fit=crop&q=80&w=400" },
+            { id: 5, name: "Mascara Kerastase", price: 130.90, brand: "Kerastase", category: "Beleza", description: "Nutrição intensa para cabelos ressecados.", img: "https://tse4.mm.bing.net/th/id/OIP.zQEaKcL9M0-6xa4WesdH0wHaHa?rs=1&pid=ImgDetMain&o=7&rm=3" }
+        ];
+
+        let cart = [];
+        let valorFrete = 0;
+        const whatsappNumber = "5548996168426";
+        const taxasMaquininha = { 1: 5.99, 2: 11.39, 3: 12.49, 4: 13.09, 5: 13.79, 6: 14.49, 7: 15.49, 8: 16.09, 9: 16.69, 10: 17.39, 11: 18.39, 12: 18.79 };
+
+        function displayProducts(items) {
+            const grid = document.getElementById('product-grid');
+            if (!grid) return;
+            grid.innerHTML = items.length ? '' : '<p class="col-span-full text-center py-20 text-gray-400">Nenhum produto encontrado.</p>';
+            
+            items.forEach(p => {
+                grid.innerHTML += `
+                    <div class="bg-white rounded-lg p-1 md:p-4 shadow-sm border border-gray-100 flex flex-col h-full min-w-0">
+                        <div class="relative bg-gray-50 rounded mb-1.5 md:mb-3 aspect-square flex items-center justify-center overflow-hidden">
+                            <img src="${p.img}" class="object-cover w-full h-full">
+                        </div>
+                        <div class="flex-grow flex flex-col min-w-0">
+                            <span class="text-[6px] md:text-[10px] font-bold w-fit uppercase bg-brand-yellow/10 text-brand-yellow px-1 py-0.5 rounded truncate max-w-full block">${p.brand}</span>
+                            <h3 class="font-bold text-[7px] md:text-sm text-gray-800 mt-1 line-clamp-2 leading-tight">${p.name}</h3>
+                            <p class="text-[6px] md:text-xs text-gray-500 mt-1 line-clamp-2 leading-tight flex-grow">${p.description}</p>
+                            <div class="mt-1">
+                                <p class="font-black text-[8px] md:text-xl text-brand-darker leading-none">R$ ${p.price.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</p>
+                            </div>
+                        </div>
+                        <div class="mt-1.5 pt-1.5 border-t border-gray-100 flex flex-col gap-1">
+                            <button onclick="openInstallmentModal('${p.name}', ${p.price})" class="w-full text-[6px] md:text-xs font-semibold text-gray-600 flex items-center justify-center py-1 hover:text-brand-yellow">
+                                <i class="fa-solid fa-calculator"></i> <span class="hidden md:inline ml-1">Simular Parcelas</span>
+                            </button>
+                            <button onclick="addToCart('${p.name}', ${p.price}, '${p.img}')" class="w-full bg-brand-darker text-white py-1.5 md:py-2.5 rounded text-[7px] md:text-sm font-bold flex items-center justify-center hover:bg-brand-yellow hover:text-brand-darker">
+                                <i class="fa-solid fa-cart-plus"></i> <span class="hidden md:inline ml-1">Comprar</span>
+                            </button>
+                        </div>
+                    </div>`;
+            });
+        }
+
+        function applyFilters() {
+            const maxPrice = parseFloat(document.getElementById('filter-price').value);
+            document.getElementById('price-label').innerText = `R$ ${maxPrice.toLocaleString('pt-BR')}`;
+            const selectedCats = Array.from(document.querySelectorAll('#filter-categories input:checked')).map(i => i.value);
+            const selectedBrands = Array.from(document.querySelectorAll('#filter-brands input:checked')).map(i => i.value);
+            const filtered = products.filter(p => p.price <= maxPrice && (selectedCats.length === 0 || selectedCats.includes(p.category)) && (selectedBrands.length === 0 || selectedBrands.includes(p.brand)));
+            displayProducts(filtered);
+        }
+
+        function toggleCart() {
+            const modal = document.getElementById('cart-modal');
+            modal.classList.toggle('hidden');
+            if (!modal.classList.contains('hidden')) updateCartUI();
+        }
+
+        function addToCart(name, price, img) {
+            const item = cart.find(i => i.name === name);
+            if (item) { item.quantity++; } else { cart.push({ name, price: parseFloat(price), img, quantity: 1 }); }
+            updateCartUI();
+            document.getElementById('cart-modal').classList.remove('hidden');
+        }
+
+        function changeQty(name, delta) {
+            const item = cart.find(i => i.name === name);
+            if (item) {
+                item.quantity += delta;
+                if (item.quantity <= 0) cart = cart.filter(i => i.name !== name);
+                updateCartUI();
+            }
+        }
+
+        function updateCartUI() {
+            const container = document.getElementById('cart-items');
+            const totalDisplay = document.getElementById('cart-total');
+            const subtotalDisplay = document.getElementById('cart-subtotal');
+            const countBadge = document.getElementById('cart-count');
+            
+            container.innerHTML = cart.length ? '' : '<p class="text-center py-10 text-gray-400">Cesta vazia</p>';
+            let subtotal = 0;
+            cart.forEach(item => {
+                subtotal += item.price * item.quantity;
+                container.innerHTML += `
+                    <div class="flex gap-4 bg-white p-3 rounded-2xl border border-gray-100 shadow-sm">
+                        <img src="${item.img}" class="w-16 h-16 rounded-xl object-cover bg-gray-50">
+                        <div class="flex-grow min-w-0">
+                            <h4 class="text-sm font-bold text-gray-800 truncate">${item.name}</h4>
+                            <p class="text-brand-yellow font-black text-sm">R$ ${item.price.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</p>
+                            <div class="flex items-center gap-3 mt-2 bg-gray-100 w-fit rounded-lg p-1">
+                                <button onclick="changeQty('${item.name}', -1)" class="w-6 h-6 flex items-center justify-center font-bold">-</button>
+                                <span class="text-xs font-bold w-4 text-center">${item.quantity}</span>
+                                <button onclick="changeQty('${item.name}', 1)" class="w-6 h-6 flex items-center justify-center font-bold">+</button>
+                            </div>
+                        </div>
+                    </div>`;
+            });
+            const totalGeral = subtotal + valorFrete;
+            subtotalDisplay.innerText = `R$ ${subtotal.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
+            totalDisplay.innerText = `R$ ${totalGeral.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
+            const qtd = cart.reduce((acc, i) => acc + i.quantity, 0);
+            countBadge.innerText = qtd;
+            countBadge.classList.toggle('hidden', qtd === 0);
+        }
+
+        function sendToWhatsApp() {
+            if (cart.length === 0) return alert("Cesta vazia!");
+            let msg = "Olá! *Quero saber mais sobre os produtos que selecionei no site.*\n\n--- *PRODUTOS* ---\n";
+            cart.forEach(i => { msg += `• ${i.quantity}x ${i.name}\n`; });
+            if (valorFrete > 0) msg += `\n*Frete:* R$ ${valorFrete.toFixed(2)}`;
+            window.open(`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(msg)}`, '_blank');
+        }
+
+        function openInstallmentModal(name, price) {
+            const modal = document.getElementById('installment-modal');
+            document.getElementById('modal-product-name').innerText = name;
+            document.getElementById('modal-product-price').innerText = `À vista: R$ ${price.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
+            const list = document.getElementById('installment-list');
+            list.innerHTML = '';
+            for (let i = 1; i <= 12; i++) {
+                const taxa = taxasMaquininha[i] / 100;
+                const totalV = price / (1 - taxa);
+                list.innerHTML += `<div class="flex justify-between p-2 bg-gray-50 rounded-lg text-sm border-b border-gray-100"><span class="font-bold">${i}x de R$ ${(totalV/i).toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span><span class="text-gray-400 text-[10px]">Total: R$ ${totalV.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span></div>`;
+            }
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeInstallmentModal() { document.getElementById('installment-modal').classList.add('hidden'); }
+        document.addEventListener('DOMContentLoaded', () => displayProducts(products));
+    </script>
+</body>
+</html>
